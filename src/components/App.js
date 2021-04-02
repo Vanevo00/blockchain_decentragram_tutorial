@@ -49,8 +49,15 @@ class App extends Component {
       this.setState({ decentragram })
       const imagesCount = await decentragram.methods.imageCount().call()
       this.setState({ imagesCount })
-      this.setState({ loading: false })
 
+      for (let i = 1; i <= imagesCount; i++) {
+        const image = await decentragram.methods.images(i).call()
+        this.setState({
+          images: [...this.state.images, image]
+        })
+      }
+
+      this.setState({ loading: false })
     } else {
       window.alert(`Decentragram not deployed on the selected network (id: ${networkId})`)
     }
@@ -98,6 +105,7 @@ class App extends Component {
         { this.state.loading
           ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
           : <Main
+              images={this.state.images}
               captureFile={this.captureFile}
               uploadImage={this.uploadImage}
             />
