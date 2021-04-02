@@ -57,6 +57,10 @@ class App extends Component {
         })
       }
 
+      this.setState((prevState) => {
+        return {images: prevState.images.sort((a, b) => b.tipAmount - a.tipAmount)}
+      })
+
       this.setState({ loading: false })
     } else {
       window.alert(`Decentragram not deployed on the selected network (id: ${networkId})`)
@@ -93,6 +97,13 @@ class App extends Component {
     })
   }
 
+  tipImageOwner = (id, tipAmount) => {
+    this.setState({ loading: true })
+    this.state.decentragram.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount}).on('transactionHash', (hash) => {
+      this.setState({ loading: false })
+    })
+  }
+
   async componentDidMount() {
     await this.loadWeb3()
     await this.loadBlockChainData()
@@ -108,6 +119,7 @@ class App extends Component {
               images={this.state.images}
               captureFile={this.captureFile}
               uploadImage={this.uploadImage}
+              tipImageOwner={this.tipImageOwner}
             />
           }
         }
